@@ -30,11 +30,15 @@ git clone https://github.com/kimbluerain/skills-pack.git reasonix
 hermes skills tap add https://github.com/kimbluerain/skills-pack
 ```
 
-### Claude Code
+### 一键安装（含 Profile）
 
 ```bash
-cp -r reasonix/* ~/.claude/skills/
+git clone https://github.com/kimbluerain/skills-pack.git
+cd skills-pack/profiles
+bash setup.sh
 ```
+
+脚本交互式引导：输入你的名字 → 项目目录 → 自动创建 5 个 profile（panam/johnny/researcher/coder/reviewer）+ 安装 reasonix skill。
 
 ### 通用
 

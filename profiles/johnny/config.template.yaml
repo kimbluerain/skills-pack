@@ -1,0 +1,20 @@
+1|model:
+2|  default: mimo-v2.5
+3|  provider: xiaomi
+4|terminal:
+5|  cwd: $HOME/projects/ex/gangjing
+6|agent:
+7|  max_turns: 120
+8|display:
+9|  personality: concise
+10|  language: zh
+11|mcp_servers:
+12|  hermes-studio:
+13|    command: hermes-studio-mcp
+14|    env:
+15|      HERMES_WEB_UI_URL: http://127.0.0.1:8748
+16|      HERMES_WEB_UI_HOME: $HOME/.hermes-web-ui
+17|      HERMES_WEBUI_STATE_DIR: $HOME/.hermes-web-ui
+18|      HERMES_WEB_UI_MANAGED_MCP: "1"
+19|    enabled: true
+20|

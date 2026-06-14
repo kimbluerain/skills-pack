@@ -1,0 +1,18 @@
+model:
+  default: qwen3.7-max
+  provider: custom
+  base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  api_key: ""  # 在此填入你的 API key
+terminal:
+  cwd: $HOME/projects/ex/reviewer
+agent:
+  max_turns: 120
+mcp_servers:
+  hermes-studio:
+    command: hermes-studio-mcp
+    env:
+      HERMES_WEB_UI_URL: http://127.0.0.1:8748
+      HERMES_WEB_UI_HOME: $HOME/.hermes-web-ui
+      HERMES_WEBUI_STATE_DIR: $HOME/.hermes-web-ui
+      HERMES_WEB_UI_MANAGED_MCP: "1"
+    enabled: true

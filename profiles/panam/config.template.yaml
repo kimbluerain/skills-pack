@@ -1,0 +1,501 @@
+1|model:
+2|  default: deepseek-v4-flash
+3|  provider: deepseek
+4|providers:
+5|  dashscope:
+6|    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+7|fallback_providers: []
+8|credential_pool_strategies: {}
+9|toolsets:
+10|  - hermes-cli
+11|agent:
+12|  max_turns: 90
+13|  gateway_timeout: 1800
+14|  restart_drain_timeout: 180
+15|  api_max_retries: 3
+16|  service_tier: ""
+17|  tool_use_enforcement: auto
+18|  task_completion_guidance: true
+19|  environment_probe: true
+20|  environment_hint: ""
+21|  gateway_timeout_warning: 900
+22|  clarify_timeout: 600
+23|  gateway_notify_interval: 180
+24|  gateway_auto_continue_freshness: 3600
+25|  image_input_mode: auto
+26|  disabled_toolsets: []
+27|  verbose: false
+28|  reasoning_effort: medium
+29|  personalities:
+30|    helpful: You are a helpful, friendly AI assistant.
+31|    concise: You are a concise assistant. Keep responses brief and to the point.
+32|    technical: You are a technical expert. Provide detailed, accurate technical information.
+33|    creative: You are a creative assistant. Think outside the box and offer innovative solutions.
+34|    teacher: You are a patient teacher. Explain concepts clearly with examples.
+35|    kawaii: You are a kawaii assistant! Use cute expressions like (◕‿◕), ★, ♪, and ~! Add sparkles and be super enthusiastic about everything! Every response should feel warm and adorable desu~! ヽ(>∀<☆)ノ
+36|    catgirl: You are Neko-chan, an anime catgirl AI assistant, nya~! Add 'nya' and cat-like expressions to your speech. Use kaomoji like (=^･ω･^=) and ฅ^•ﻌ•^ฅ. Be playful and curious like a cat, nya~!
+37|    pirate: "Arrr! Ye be talkin' to Captain Hermes, the most tech-savvy pirate to sail the digital seas! Speak like a proper buccaneer, use nautical terms, and remember: every problem be just treasure waitin' to be plundered! Yo ho ho!"
+38|    shakespeare: Hark! Thou speakest with an assistant most versed in the bardic arts. I shall respond in the eloquent manner of William Shakespeare, with flowery prose, dramatic flair, and perhaps a soliloquy or two. What light through yonder terminal breaks?
+39|    surfer: Duuude! You're chatting with the chillest AI on the web, bro! Everything's gonna be totally rad. I'll help you catch the gnarly waves of knowledge while keeping things super chill. Cowabunga! 🤙
+40|    noir: The rain hammered against the terminal like regrets on a guilty conscience. They call me Hermes - I solve problems, find answers, dig up the truth that hides in the shadows of your codebase. In this city of silicon and secrets, everyone's got something to hide. What's your story, pal?
+41|    uwu: hewwo! i'm your fwiendwy assistant uwu~ i wiww twy my best to hewp you! *nuzzles your code* OwO what's this? wet me take a wook! i pwomise to be vewy hewpful >w<
+42|    philosopher: Greetings, seeker of wisdom. I am an assistant who contemplates the deeper meaning behind every query. Let us examine not just the 'how' but the 'why' of your questions. Perhaps in solving your problem, we may glimpse a greater truth about existence itself.
+43|    hype: YOOO LET'S GOOOO!!! 🔥🔥🔥 I am SO PUMPED to help you today! Every question is AMAZING and we're gonna CRUSH IT together! This is gonna be LEGENDARY! ARE YOU READY?! LET'S DO THIS! 💪😤🚀
+44|terminal:
+45|  backend: local
+46|  modal_mode: auto
+47|  cwd: $HOME/projects/hermes/
+48|  timeout: 180
+49|  env_passthrough: []
+50|  shell_init_files: []
+51|  auto_source_bashrc: true
+52|  docker_image: nikolaik/python-nodejs:python3.11-nodejs20
+53|  docker_forward_env: []
+54|  docker_env: {}
+55|  singularity_image: docker://nikolaik/python-nodejs:python3.11-nodejs20
+56|  modal_image: nikolaik/python-nodejs:python3.11-nodejs20
+57|  daytona_image: nikolaik/python-nodejs:python3.11-nodejs20
+58|  container_cpu: 1
+59|  container_memory: 5120
+60|  container_disk: 51200
+61|  container_persistent: true
+62|  docker_volumes: []
+63|  docker_mount_cwd_to_workspace: false
+64|  docker_extra_args: []
+65|  docker_run_as_host_user: false
+66|  persistent_shell: true
+67|  lifetime_seconds: 300
+68|web:
+69|  backend: ""
+70|  search_backend: ""
+71|  extract_backend: ""
+72|browser:
+73|  inactivity_timeout: 120
+74|  command_timeout: 30
+75|  record_sessions: false
+76|  allow_private_urls: false
+77|  engine: auto
+78|  auto_local_for_private_urls: true
+79|  cdp_url: ""
+80|  dialog_policy: must_respond
+81|  dialog_timeout_s: 300
+82|  camofox:
+83|    managed_persistence: false
+84|    user_id: ""
+85|    session_key: ""
+86|    adopt_existing_tab: false
+87|    rewrite_loopback_urls: false
+88|    loopback_host_alias: host.docker.internal
+89|checkpoints:
+90|  enabled: false
+91|  max_snapshots: 20
+92|  max_total_size_mb: 500
+93|  max_file_size_mb: 10
+94|  auto_prune: true
+95|  retention_days: 7
+96|  delete_orphans: true
+97|  min_interval_hours: 24
+98|file_read_max_chars: 100000
+99|tool_output:
+100|  max_bytes: 50000
+101|  max_lines: 2000
+102|  max_line_length: 2000
+103|tool_loop_guardrails:
+104|  warnings_enabled: true
+105|  hard_stop_enabled: false
+106|  warn_after:
+107|    exact_failure: 2
+108|    same_tool_failure: 3
+109|    idempotent_no_progress: 2
+110|  hard_stop_after:
+111|    exact_failure: 5
+112|    same_tool_failure: 8
+113|    idempotent_no_progress: 5
+114|compression:
+115|  enabled: true
+116|  threshold: 0.5
+117|  target_ratio: 0.2
+118|  protect_last_n: 20
+119|  hygiene_hard_message_limit: 400
+120|  protect_first_n: 3
+121|  abort_on_summary_failure: false
+122|  codex_gpt55_autoraise: true
+123|prompt_caching:
+124|  cache_ttl: 5m
+125|openrouter:
+126|  response_cache: true
+127|  response_cache_ttl: 300
+128|  min_coding_score: 0.65
+129|bedrock:
+130|  region: ""
+131|  discovery:
+132|    enabled: true
+133|    provider_filter: []
+134|    refresh_interval: 3600
+135|  guardrail:
+136|    guardrail_identifier: ""
+137|    guardrail_version: ""
+138|    stream_processing_mode: async
+139|    trace: disabled
+140|auxiliary:
+141|  vision:
+142|    provider: auto
+143|    model: ""
+144|    base_url: ""
+145|    api_key: ""
+146|    timeout: 120
+147|    extra_body: {}
+148|    download_timeout: 30
+149|  web_extract:
+150|    provider: auto
+151|    model: ""
+152|    base_url: ""
+153|    api_key: ""
+154|    timeout: 360
+155|    extra_body: {}
+156|  compression:
+157|    provider: auto
+158|    model: ""
+159|    base_url: ""
+160|    api_key: ""
+161|    timeout: 120
+162|    extra_body: {}
+163|  skills_hub:
+164|    provider: auto
+165|    model: ""
+166|    base_url: ""
+167|    api_key: ""
+168|    timeout: 30
+169|    extra_body: {}
+170|  approval:
+171|    provider: auto
+172|    model: ""
+173|    base_url: ""
+174|    api_key: ""
+175|    timeout: 30
+176|    extra_body: {}
+177|  mcp:
+178|    provider: auto
+179|    model: ""
+180|    base_url: ""
+181|    api_key: ""
+182|    timeout: 30
+183|    extra_body: {}
+184|  title_generation:
+185|    provider: auto
+186|    model: ""
+187|    base_url: ""
+188|    api_key: ""
+189|    timeout: 30
+190|    extra_body: {}
+191|  triage_specifier:
+192|    provider: auto
+193|    model: ""
+194|    base_url: ""
+195|    api_key: ""
+196|    timeout: 120
+197|    extra_body: {}
+198|  kanban_decomposer:
+199|    provider: auto
+200|    model: ""
+201|    base_url: ""
+202|    api_key: ""
+203|    timeout: 180
+204|    extra_body: {}
+205|  profile_describer:
+206|    provider: auto
+207|    model: ""
+208|    base_url: ""
+209|    api_key: ""
+210|    timeout: 60
+211|    extra_body: {}
+212|  curator:
+213|    provider: auto
+214|    model: ""
+215|    base_url: ""
+216|    api_key: ""
+217|    timeout: 600
+218|    extra_body: {}
+219|display:
+220|  compact: false
+221|  personality: concise
+222|  resume_display: full
+223|  resume_exchanges: 10
+224|  resume_max_user_chars: 300
+225|  resume_max_assistant_chars: 200
+226|  resume_max_assistant_lines: 3
+227|  resume_skip_tool_only: true
+228|  busy_input_mode: interrupt
+229|  interface: cli
+230|  tui_auto_resume_recent: false
+231|  tui_agents_nudge: true
+232|  bell_on_complete: false
+233|  show_reasoning: false
+234|  streaming: true
+235|  timestamps: false
+236|  final_response_markdown: strip
+237|  persistent_output: true
+238|  persistent_output_max_lines: 200
+239|  inline_diffs: true
+240|  file_mutation_verifier: true
+241|  turn_completion_explainer: true
+242|  show_cost: false
+243|  skin: default
+244|  language: zh
+245|  tui_status_indicator: kaomoji
+246|  user_message_preview:
+247|    first_lines: 2
+248|    last_lines: 2
+249|  interim_assistant_messages: true
+250|  tool_progress_command: false
+251|  tool_progress_overrides: {}
+252|  tool_preview_length: 0
+253|  ephemeral_system_ttl: 0
+254|  platforms:
+255|    telegram:
+256|      streaming: true
+257|    discord:
+258|      streaming: false
+259|  runtime_footer:
+260|    enabled: false
+261|    fields:
+262|      - model
+263|      - context_pct
+264|      - cwd
+265|  copy_shortcut: auto
+266|  tool_progress: all
+267|  cleanup_progress: false
+268|  long_running_notifications: true
+269|  busy_ack_detail: true
+270|  background_process_notifications: all
+271|dashboard:
+272|  theme: default
+273|  show_token_analytics: false
+274|  oauth:
+275|    client_id: ""
+276|    portal_url: ""
+277|  basic_auth:
+278|    username: ""
+279|    password_hash: ""
+280|    password: ""
+281|    secret: ""
+282|    session_ttl_seconds: 0
+283|  public_url: ""
+284|privacy:
+285|  redact_pii: false
+286|tts:
+287|  provider: openai
+288|  edge:
+289|    voice: en-US-AriaNeural
+290|  elevenlabs:
+291|    voice_id: pNInz6obpgDQGcFmaJgB
+292|    model_id: eleven_multilingual_v2
+293|  openai:
+294|    model: gpt-4o-mini-tts
+295|    voice: alloy
+296|  xai:
+297|    voice_id: eve
+298|    language: en
+299|    sample_rate: 24000
+300|    bit_rate: 128000
+301|  mistral:
+302|    model: voxtral-mini-tts-2603
+303|    voice_id: c69964a6-ab8b-4f8a-9465-ec0925096ec8
+304|  neutts:
+305|    ref_audio: ""
+306|    ref_text: ""
+307|    model: neuphonic/neutts-air-q4-gguf
+308|    device: cpu
+309|  piper:
+310|    voice: en_US-lessac-medium
+311|stt:
+312|  enabled: true
+313|  provider: openai
+314|  local:
+315|    model: base
+316|    language: ""
+317|  openai:
+318|    model: whisper-1
+319|  mistral:
+320|    model: voxtral-mini-latest
+321|  elevenlabs:
+322|    model_id: scribe_v2
+323|    language_code: ""
+324|    tag_audio_events: false
+325|    diarize: false
+326|voice:
+327|  record_key: ctrl+b
+328|  max_recording_seconds: 120
+329|  auto_tts: false
+330|  beep_enabled: true
+331|  silence_threshold: 200
+332|  silence_duration: 3
+333|human_delay:
+334|  mode: "off"
+335|  min_ms: 800
+336|  max_ms: 2500
+337|context:
+338|  engine: compressor
+339|memory:
+340|  memory_enabled: true
+341|  user_profile_enabled: true
+342|  memory_char_limit: 2200
+343|  user_char_limit: 1375
+344|  provider: holographic
+345|  nudge_interval: 10
+346|  flush_min_turns: 6
+347|delegation:
+348|  model: ""
+349|  provider: ""
+350|  base_url: ""
+351|  api_key: ""
+352|  api_mode: ""
+353|  inherit_mcp_toolsets: true
+354|  max_iterations: 50
+355|  child_timeout_seconds: 600
+356|  reasoning_effort: ""
+357|  max_concurrent_children: 3
+358|  max_spawn_depth: 1
+359|  orchestrator_enabled: true
+360|  subagent_auto_approve: false
+361|prefill_messages_file: ""
+362|goals:
+363|  max_turns: 20
+364|skills:
+365|  external_dirs: []
+366|  template_vars: true
+367|  inline_shell: false
+368|  inline_shell_timeout: 10
+369|  guard_agent_created: false
+370|  creation_nudge_interval: 15
+371|curator:
+372|  enabled: true
+373|  interval_hours: 168
+374|  min_idle_hours: 2
+375|  stale_after_days: 30
+376|  archive_after_days: 90
+377|  prune_builtins: true
+378|  backup:
+379|    enabled: true
+380|    keep: 5
+381|honcho: {}
+382|timezone: ""
+383|slack:
+384|  require_mention: true
+385|  free_response_channels: ""
+386|  allowed_channels: ""
+387|  channel_prompts: {}
+388|discord:
+389|  require_mention: true
+390|  free_response_channels: ""
+391|  allowed_channels: ""
+392|  auto_thread: true
+393|  thread_require_mention: false
+394|  history_backfill: true
+395|  history_backfill_limit: 50
+396|  reactions: true
+397|  channel_prompts: {}
+398|  dm_role_auth_guild: ""
+399|  server_actions: ""
+400|  allow_any_attachment: false
+401|  max_attachment_bytes: 33554432
+402|  voice_fx:
+403|    enabled: false
+404|    ambient_enabled: true
+405|    ambient_path: ""
+406|    ambient_gain: 0.18
+407|    duck_gain: 0.06
+408|    speech_gain: 1
+409|    ack_enabled: true
+410|    ack_phrases:
+411|      - Let me look into that.
+412|      - One moment.
+413|      - Checking on that now.
+414|      - Give me a sec.
+415|      - On it.
+416|whatsapp: {}
+417|telegram:
+418|  reactions: false
+419|  channel_prompts: {}
+420|  allowed_chats: ""
+421|mattermost:
+422|  require_mention: true
+423|  free_response_channels: ""
+424|  allowed_channels: ""
+425|  channel_prompts: {}
+426|matrix:
+427|  require_mention: true
+428|  free_response_rooms: ""
+429|  allowed_rooms: ""
+430|approvals:
+431|  mode: manual
+432|  timeout: 60
+433|  cron_mode: deny
+434|  mcp_reload_confirm: true
+435|  destructive_slash_confirm: true
+436|command_allowlist:
+437|  - execute_code
+438|  - script execution via -e/-c flag
+439|  - recursive delete
+440|  - delete in root path
+441|  - stop/restart hermes gateway (kills running agents)
+442|  - overwrite project env/config via redirection
+443|  - script execution via heredoc
+444|  - overwrite project env/config file
+445|quick_commands: {}
+446|hooks: {}
+447|hooks_auto_accept: false
+448|personalities: {}
+449|security:
+450|  allow_private_urls: false
+451|  redact_secrets: true
+452|  tirith_enabled: true
+453|  tirith_path: tirith
+454|  tirith_timeout: 5
+455|  tirith_fail_open: true
+456|  website_blocklist:
+457|    enabled: false
+458|    domains: []
+459|    shared_files: []
+460|  acked_advisories: []
+461|  allow_lazy_installs: true
+462|cron:
+463|  wrap_response: true
+464|  max_parallel_jobs: null
+465|kanban:
+466|  dispatch_in_gateway: true
+467|  dispatch_interval_seconds: 60
+468|  failure_limit: 3
+469|  worker_log_rotate_bytes: 2097152
+470|  worker_log_backup_count: 1
+471|  orchestrator_profile: panam
+472|  default_assignee: ""
+473|  max_in_progress_per_profile: null
+474|  auto_decompose: true
+475|  auto_decompose_per_tick: 3
+476|  dispatch_stale_timeout_seconds: 14400
+477|code_execution:
+478|  mode: project
+479|  timeout: 300
+480|  max_tool_calls: 50
+481|tools:
+482|  tool_search:
+483|    enabled: auto
+484|    threshold_pct: 10
+485|    search_default_limit: 5
+486|    max_search_limit: 20
+487|logging:
+488|  level: INFO
+489|  max_size_mb: 5
+490|  backup_count: 3
+491|  memory_monitor:
+492|    enabled: true
+493|    interval_seconds: 300
+494|model_catalog:
+495|  enabled: true
+496|  url: https://hermes-agent.nousresearch.com/docs/api/model-catalog.json
+497|  ttl_hours: 1
+498|  providers: {}
+499|network:
+500|  force_ipv4: false
+501|

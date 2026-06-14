@@ -1,0 +1,15 @@
+model:
+  default: mimo-v2.5
+terminal:
+  cwd: $HOME/projects/ex/researcher
+agent:
+  max_turns: 120
+mcp_servers:
+  hermes-studio:
+    command: hermes-studio-mcp
+    env:
+      HERMES_WEB_UI_URL: http://127.0.0.1:8748
+      HERMES_WEB_UI_HOME: $HOME/.hermes-web-ui
+      HERMES_WEBUI_STATE_DIR: $HOME/.hermes-web-ui
+      HERMES_WEB_UI_MANAGED_MCP: "1"
+    enabled: true
