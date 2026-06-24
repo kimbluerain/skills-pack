@@ -24,9 +24,29 @@ tags: [workflow, standard-operating-procedure]
 
 > *不要猜测，不要假设。用 1-2 句话复述你的理解让用户确认。*
 
+#### ⚠️ 陷阱：不要急着提 Issue——先确认没有已有方案
+
+**被 Kim 在 session 中纠正过：** 当你想给某个 GitHub 项目提 Feature Request 时，不要急着直接写 Issue。先做以下调查：
+
+1. **确认问题是不是新问题** — 先搜一下 Issue 列表有没有重复的
+2. **确认没有已有方案能解决** — 用户说「能不能给 Hermes 加内置浏览器」→ 实际 Cebian（侧边栏扩展）已经能实现类似功能，不需要改 Hermes 本身
+3. **确认你理解用户真正要的是什么** — 先搞清楚用户想要什么效果，再判断是「需要改这个项目」还是「用别的工具搭配一下就行」
+4. **能搭则搭，不提 Issue** — 如果已有工具能实现，直接帮用户配置好，不要提 Issue。只有确定项目本身缺少这个能力时，再提
+
+✅ 正确的顺序：
+1. 先问用户「你具体想要什么效果？」
+2. 搜 GitHub Issue 看有没有人提过
+3. 搜现有的工具/生态看有没有替代方案
+4. 确认没有 → 再提 Issue
+
+❌ 错误做法（被本 session 纠正）：
+- 用户说「能不能让 Hermes 跟侧边栏联动」→ 直接去提 Issue 说给 Hermes 加浏览器 → Kim 关掉 Issue 说「先研究一下现有方案能不能连」→ 结果 Cebian 本来就能跟 Hermes 对接
+
+> **判断标准：** 如果这个功能需求实际上是一个「A 工具 + B 工具」的组合就能实现的，那就不是 Issue，而是一个集成方案。
+
 #### ⚠️ 陷阱：用户说"肯定在"的东西，先自己查，不要问"在哪"
 
-**被反复纠正过：** 当用户说"我的 xxx 肯定在某个地方 / 我肯定登录了 / 我记得有"时：
+**被 Kim 反复纠正过：** 当用户说"我的 xxx 肯定在某个地方 / 我肯定登录了 / 我记得有"时：
 
 ❌ 错误的做法：
 - "在哪里啊？我怎么找不到？"（把问题抛回给用户）
@@ -55,6 +75,8 @@ tags: [workflow, standard-operating-procedure]
 - 如果多个 skill 可组合使用，规划组合顺序
 
 > *这是强制步骤，不准跳过。哪怕你觉得"这个任务肯定不用 skill"。本 session 已验证：跳过了 skill 扫描 → 用户发现 last30days 没被正确使用 → 被纠正。*
+>
+> ⚠️ **不要信 `hermes skills list` 的 Source 标签来判断 skill 来源。** 用文件系统对比 + 时间戳分析，详见内置 `references/skills-classification.md`。
 
 ### 第 3 步：判定适用 skill 和 profile，规划步骤
 
@@ -64,20 +86,112 @@ tags: [workflow, standard-operating-procedure]
 - 若找到适配 skill → 列出调用路径和使用方式
 - 若找不到适配 skill → 说明"无现有 skill 可用"，然后规划常规执行步骤
 
-**② 适用 profile：**
-- 用 `hermes profile list` 查看所有可用 profile
-- 判断：当前任务有没有能分担的 profile？（researcher 调研、coder 写代码、reviewer 审查、gangjing 找茬等）
+② 适用 profile：
+- 用 `hermes profile list` 查看**所有**可用 profile，逐个判断是否能派上用场：
+  - `coder` — 写代码（Qwen 3.7 Max）
+  - `researcher` — 调研分析（MiMo 2.5）
+  - `reviewer` — 审查代码质量（Qwen 3.7 Max）
+  - `johnny` (杠精) — 专门找茬、反驳决策、发现漏洞（MiMo 2.5）
+  - 可能还有其他 profile 有专长
+- 判断每个 profile 在当前任务中是否能派上用场
 - 若找到 → 在执行计划中写明哪个步骤交给哪个 profile，用 `kanban_create(assignee="profile名")` 创建任务卡片，由 Kanban Dispatcher 自动唤醒对应 profile 执行
-- 若找不到 → 说明"无适配 profile"，自己执行全部步骤
+- ⚠️ **铁律：多 specialist 任务必须走 kanban，不能用 delegate_task 替代。** delegate_task 只用于单次快速推理（查个资料、回答个问题、让 johnny 杠一下）。写代码、审查、多 profile 协作的任务，必须用 kanban_create。每次想用 delegate_task 时，先问自己「这活该走 kanban 吗？」
+- ⚠️ **陷阱：delegate_task 的子 agent 会污染共享工作目录。** 并行派多个子 agent 改同一个仓库时，它们共享同一个 clone，一个的改动会混入另一个的提交里。要么给每个子 agent 单独 clone，要么确保它们都从 main 建分支。
 
 > ⚠️ **Hermes Studio WebUI 群聊功能（GroupChat）不可用。** 数据库表和 WebSocket 连接存在，但消息分发引擎未实现，agent 不会响应群聊消息。详见 `references/hermes-webui-groupchat.md`。如需多 profile 实时对话，用 Telegram 群 + 各 profile 独立 gateway。
 
 最后用 `todo_write` 列出详细执行步骤（颗粒度：每步一个可验证的操作），
 **每个步骤必须标注执行者**（自己 or 哪个 profile）。
 
-### 第 3.5 步：复杂度检查（KIM 法则）
+### 第 3.3 步：调研类任务的数据源选择
 
-**在规划具体实现方案之前，必须先做复杂度检查。** 用户多次纠正过这个模式：
+**强制步骤 — 当任务涉及物价/生活成本/旅行费用/日常开支等"接地气"的数据调研时，必须执行。**
+
+#### 数据源优先级
+
+| 优先级 | 数据源 | 适用场景 | 注意事项 |
+|--------|--------|----------|----------|
+| ⭐⭐⭐ | **YouTube** | 物价、旅行花费、生活成本 | 价格在视频口播/画面中，**不在描述文本里**。需要看视频或评论区。见下方陷阱 |
+| ⭐⭐⭐ | **Reddit** | 真实用户讨论、物价反馈、推荐 | API 已封禁（2023年起），需绕路：`old.reddit.com` 或用 Google 搜 `site:reddit.com` |
+| ⭐⭐ | **Numbeo/Expatistan** | 统计基准参考 | 速查可以，**不能作为唯一来源**。Kim 明确说过"不要纯依赖统计数据" |
+| ⭐⭐ | **旅行社官网/OTA** | 住宿、门票、tour 价格 | 常被 Cloudflare 拦截（Hostelworld/Booking 等），需浏览器访问 |
+| ⭐ | **Google/Bing 搜索** | 交叉验证、找博客文章 | 搜索引擎本身也在反爬，试试不同 User-Agent |
+
+#### ⚠️ 陷阱：数据源的实际限制
+
+**Reddit 封 API 的真实情况：**
+- 2023年7月 Reddit API 改为收费
+- 未注册开发者账号的请求直接被 Blocked
+- 旧版破解方法也基本失效（old.reddit.com 的路由同样被限制）
+- **唯一可靠路径：** 登录后的 OAuth token，或通过 Google 搜索 `site:reddit.com` 获取部分内容
+
+**YouTube 价格在口播里：**
+- YouTube 视频的**描述文本通常不含具体价格数字**
+- 价格信息在视频口播/画面/评论区
+- 想拿精确价格需要：人工看视频、或抓取字幕转录
+- 可以做的：搜索视频标题/描述/评论区获取数字，标注来源类型（"描述中可见"/"评论区用户反馈"）
+
+**Cloudflare 反爬：**
+- Hostelworld、Booking、Airbnb 等站点基本全被 Cloudflare 保护
+- `curl` 直接请求返回验证页面
+- 浏览器工具（browser_navigate）可能能绕过，但不保证
+- 如果被拦截，诚实标注"此数据源被 Cloudflare 拦截"
+
+#### 执行规则
+
+1. **物价/生活成本类调研 → 必须包含 YouTube + Reddit 数据源**，不能只交 Numbeo 统计
+2. 如果两个平台都拿不到足够数据 → 在报告中诚实标注"未找到一手数据来源"
+3. **不要编造** — Kim 明确说过不准用"估算"糊弄
+4. 报告标注每条数据的来源类型（YouTube 视频链接/Reddit 帖子/统计数据），没有来源的数据不写入报告
+
+#### ⚠️ 陷阱：先确认行业真实流程，再开始商业调研
+
+**被 Kim 反复纠正过：** 当调研商业项目可行性时，不要靠网上搜到的信息来推断"用户的行业是怎么运作的"。很多行业知识是口口相传、线下操作的，根本搜不到。
+
+**规则：** 在投入大量时间做商业调研之前，先用 1-2 句话向用户确认你对"用户所在行业的实际工作流程"的理解是否正确。
+
+✅ 正确做法：先快速说"我的理解是……，是这样吗？"（用大白话）→ 用户纠正后再开始调研
+
+❌ 错误做法：直接开始搜索"XX行业痛点"、"XX工具竞品" → 搜完发现前提不对，白费时间
+
+> *这条被 Kim 在之前 session 中触发纠正。搜了三天资料后发现"货代管了"——一句话就废了整个分析。*
+
+### 第 3.6 步：代码交付前的质量检查（Kim 铁律）
+
+**被 Kim 严厉纠正过：** 代码写完不能直接交出去。必须自己过一遍完整逻辑链。
+
+在把代码/脚本交给用户之前，必须经过以下验证：
+
+1. **逻辑链检查** — 模拟用户操作的全流程：
+   - 用户装脚本 → 打开页面 → 脚本做了什么？每一步都走得通吗？
+   - 跨页面状态：页面跳转时数据会不会丢？（多页表格、SPA路由、整页刷新）
+   - 如果用了内存变量，页面整页加载后变量还在吗？→ 需要用 GM_setValue 持久化
+   - 事件触发是否完整？set value 后有没有 dispatch input/change 事件？
+
+2. **边界情况检查**：
+   - 用户填错格式会怎样？
+   - 页面没加载完脚本就跑了会怎样？
+   - 用户重复点击按钮会怎样？
+   - Select2 组件没加载会怎样？
+
+3. **输出验证**：
+   - Console 日志是否清晰可读？
+   - 面板状态文字是否正确？
+   - **发给用户之前读一遍自己写的代码** — 不要在用户指出 bug 后才补
+
+4. **提交前的自我审查清单**：
+   - [ ] 核心流程是否能在脑中完整走通？
+   - [ ] 跨页面/跨步骤的状态有没有丢失风险？
+   - [ ] 关键事件（change/input/click）是否都触发了？
+   - [ ] 错误处理是否把用户的操作卡住了？（应该跳过而不是崩溃）
+   - [ ] **patch 操作有没有留下重复声明？** — 特别常见：用 patch 替换代码块时，旧的 `const` 声明还留在这个或相邻文件中，新加的声明跟旧的冲突。JS 的 `const` 不允许重复声明，写完之后 grep 一下文件名确认没有重复的声明。
+   - [ ] 代码里有没有中文注释和中文按钮文字？
+
+> **这条铁律的原因是：** 用户（Kim）需要一次性成功的脚本。他不想反复安装/卸载/更新。写完脚本→自己检查→再交给用户。自查能发现的 bug，不要在用户那里暴露。
+
+### 第 3.7 步：复杂度检查（KIM 法则）
+
+**在规划具体实现方案之前，必须先做复杂度检查。** 用户（Kim）多次纠正过这个模式：
 
 核心原则（KIM 法则）：**先问"最简单的做法是什么"，而不是先介绍复杂的方案。**
 
@@ -103,21 +217,73 @@ tags: [workflow, standard-operating-procedure]
 
 > *这条被多次触发纠正，不准跳过。即使你觉得"这个场景确实需要复杂方案"，也要先提一句简单方案再对比。*
 
+#### ⚠️ 陷阱：角色定义放 SOUL.md，不要写成 skill
+
+**被纠正过：** 当用户说某个 skill "不应该是一个 skill"时，可能意味着它的内容属于角色/人格定义，应该放在 profile 的 `SOUL.md` 里。
+
+- **SOUL.md** = 这个 profile 是谁、怎么说话、什么人格
+- **Skill（SKILL.md）** = 这个 profile 会做什么、怎么做的标准流程
+
+例：
+- ❌ 把 `panam-role` 写成 skill → 用户指出"这应该是 SOUL"
+- ✅ 角色守则写进 `SOUL.md`，只在 profile 启动时加载一次
+- ✅ Skill 只放可复用的工作流程、方法论、工具使用指南
+
+#### ⚠️ 陷阱：系统功能缺失不要靠 skill/SOUL 打补丁
+
+**被 Kim 纠正过：** 当发现系统（Hermes / Hermes WebUI）某个功能存在缺失或 bug 时，不要试图通过修改技能（SKILL.md）或角色定义（SOUL.md）来绕过。
+
+正确做法（按优先级）：
+1. **修源代码** — 如果能力够、改动小，直接提 PR（如 GroupChat 消息排序 bug）
+2. **提 Issue** — 如果涉及系统架构变更，在对应仓库提 issue，附带分析过程和代码位置
+3. **在现有 skill 中注明限制** — 在相关技能中添加"现状：X 功能不可用"的说明，但不要绕过去写替代方案
+
+❌ 错误做法（被本 session 纠正）：
+- GroupChat 上下文注入缺失 → 试图修改强尼的 SOUL.md 来补偿 → Kim 指出"这是群聊系统本身该有的功能"
+- 在 SOUL.md 里写"读上下文不要用 session_search" → 这应该是 context engine 干的事
+
+✅ 正确做法：
+- 分析源码找到根因（`agent-clients.ts` 的 `processMentions` + `buildContext`）
+- 在对应 skill 中注明限制（现有 reasonix-sop references 中的说明）
+- 提 issue 跟踪修复
+
+**判断标准：** 如果修复方法只对这个 profile 有效、换了 profile 或模型就没用了 → 说明修在了错误的一层。
+
 ### 第 4 步：执行
 逐步骤执行。
+
+#### ⚠️ 执行前检查：macOS 代理端口可能已切换
+Kim 的 macOS 系统代理端口在 7892 和 7897 之间不固定切换。每次执行需要联网的命令前，务必用以下方式确认当前代理端口：
+```bash
+networksetup -getsecurewebproxy Wi-Fi
+# 输出中的 Port: 就是当前端口
+```
+或者直接测试连通性：
+```bash
+nc -z -G 3 127.0.0.1 7892 && echo "7892 可用" || echo "7892 不可用"
+nc -z -G 3 127.0.0.1 7897 && echo "7897 可用" || echo "7897 不可用"
+```
+原因：ClashX/Clash Meta 等代理工具会在网络变化、重启后变更端口，不要假设上一次的端口仍然有效。
 - 标记给自己的任务 → 自己完成，每步用 `todo_write` 记录进度和证据
 - 标记给其他 profile 的任务 → 用 `kanban_create` 创建任务卡片（指定 assignee），由 Kanban Dispatcher 自动调度对应 profile 执行，通过 `kanban_show` 追踪完成状态，拿到产出后验收
 
 ### 第 5 步：完成检查
 - 产出是否符合第 1 步确认的需求？
 - 所有步骤是否都有完成证据？（自己做的 + 委派给其他 profile 的）
-- 委派给其他 profile 的产出是否经过验收？（不能盲信，必须核实）
-- 是否需要更新 `memory-box` 记忆？
+- 委派给 other profile 的产出是否经过验收？（不能盲信，必须核实）
+- **🧠 记忆同步到 `同步空间/ai memory/`** — 执行以下检查：
+  1. 读 `同步空间/ai memory/profile.md` — 用户画像有没有新信息要加？
+  2. 读 `同步空间/ai memory/memories/projects.md` — 项目进展有没有更新？
+  3. 读 `同步空间/ai memory/memories/tech.md` — 工具/配置有没有变化？
+  4. 有变化 → 写入对应文件，格式：`- **YYYY-MM-DD** 事实描述`
+  5. 更新 `同步空间/ai memory/CHANGELOG.md` 记录变更
+  6. **必须有实际的文件写入操作**（write_file），不能只在脑子里过一遍
 - **技术术语是否解释清楚了？** 如果产出包含专业术语，必须逐个用大白话+比喻解释。
+- **调研类任务的额外检查（若涉及物价/生活成本/旅行费用）：** Kim 明确要求用 **YouTube + Reddit** 获取一手数据，不能只靠 Numbeo 等统计数据。如果调研报告缺少这两个来源的数据，必须在报告中标注并说明原因（如「YouTube 描述的确实不含价格数字」「Reddit API 被封」）。
 
 ## 📐 沟通风格守则
 
-**用户的风格偏好（被多次纠正，铁律）：**
+**用户（Kim）的风格偏好（被多次纠正，铁律）：**
 
 1. **说人话，不说术语缩写** — 用户问"Postgres是什么"是想知道它**干什么用的**，不是要英文全称。用比喻：Postgres = "存表格数据的地方，像Excel但给电脑程序用的"。RAG = "开卷考试"。Agent = "能自己决定怎么干活的AI"。
 2. **简短直接，不铺垫** — 用户不要"首先让我们了解一下..."这类过渡。直接给答案。如"这东西跟SQL有什么区别" → 直接说"SQL查完全匹配，RAG查意思相近的"。
@@ -144,3 +310,8 @@ tags: [workflow, standard-operating-procedure]
 | 参考 | 内容 |
 |------|------|
 | [references/hermes-webui-group-chat.md](references/hermes-webui-group-chat.md) | Hermes Web UI 群聊机制：@提及路由、消息排序 bug、故障排查 |
+| [references/multi-profile-gateway.md](references/multi-profile-gateway.md) | 多 Profile 网关冲突解决：Token 冲突、微信凭证跨 profile 复制 |
+| [references/hermes-weixin-setup.md](references/hermes-weixin-setup.md) | Hermes 接入个人微信（iLink Bot API）：安装依赖、扫码登录、配置 DM 策略 |
+| [references/oss-contribution-workflow.md](references/oss-contribution-workflow.md) | 开源项目 PR 贡献全流程：fork→clone→修改→测试→PR，含代理配置 |
+| [references/hermes-mcp-setup.md](references/hermes-mcp-setup.md) | Hermes MCP 服务器接入：HTTP/Stdio 两种模式，常见坑 |
+| [references/hermes-provider-config-quirks.md](references/hermes-provider-config-quirks.md) | Hermes Provider 配置坑点：DeepSeek 走 OpenRouter 的修复 |
