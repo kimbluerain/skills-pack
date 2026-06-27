@@ -15,14 +15,32 @@ tags: [workflow, standard-operating-procedure]
 
 ## 流程
 
-### 第 1 步：澄清需求（用中文）
+### 第 1 步：澄清需求（用中文） + 读记忆
 
 用户是中文母语者，用中文复述需求。在动手前确认：
 - 用户真正的目标是什么？（不是表面需求，是背后的意图）
 - 预期产出是什么？（文件、回答、分析、代码？）
 - 有什么约束条件？（格式、风格、时间、范围？）
 
-> *不要猜测，不要假设。用 1-2 句话复述你的理解让用户确认。*
+**同时，读一下 `同步空间/ai memory/` 中的相关记忆文件**，确认有没有跟当前任务相关的历史信息。包括：
+- `profile.md` — 用户画像
+- `memories/personal.md` — 身份、偏好
+- `memories/projects.md` — 项目进展
+- `memories/tech.md` — 技术栈和配置
+
+> *不要猜测，不要假设。用 1-2 句话复述你的理解让用户确认，同时确认记忆中已有的信息是否仍然准确。*
+
+#### ⚠️ 陷阱：介入型任务先确认商业模式
+
+当用户（Kim）是以**中间人/代理人/采购代理**的身份执行任务时（而非为他自己消费），在执行任何具体操作之前，先花 1-2 分钟确认：
+
+1. **你和他之间是什么关系？** — 你是他的大管家直接干活，还是他通过其他渠道（Upwork/微信）接了客户的单，你在背后协助？
+2. **客户的预期是什么？** — Kim 对客户的承诺是什么？"找不到不付钱"还是"包找到"？了解他对客户的承诺，你才能判断应该投入多少精力。
+3. **收费模式是什么？** — 这个任务是他的档位1（固定费）、档位2（服务费+佣金）还是档位3（纯佣金）？不同的收费模式决定了该投入多少时间。
+4. **有没有已有信息？** — Kim 可能已经跟客户/工厂有过沟通，先把已有的聊天记录、邮件、文件摸一遍，不要从零开始。
+5. **有没有需要你帮忙写的内容？** — Kim 经常需要你帮忙起草邮件、Upwork 消息、微信回复。先弄清楚是要你"出内容他去发"还是"你来写他发给客户"。
+
+这步的目的是避免埋头干了半天，结果发现 Kim 跟客户的约定跟你假设的不一样。这条规则在 sourcing-agent skill 中有更详细的说明。
 
 #### ⚠️ 陷阱：不要急着提 Issue——先确认没有已有方案
 
@@ -43,6 +61,24 @@ tags: [workflow, standard-operating-procedure]
 - 用户说「能不能让 Hermes 跟侧边栏联动」→ 直接去提 Issue 说给 Hermes 加浏览器 → Kim 关掉 Issue 说「先研究一下现有方案能不能连」→ 结果 Cebian 本来就能跟 Hermes 对接
 
 > **判断标准：** 如果这个功能需求实际上是一个「A 工具 + B 工具」的组合就能实现的，那就不是 Issue，而是一个集成方案。
+
+#### ⚠️ 陷阱：用户说"确认一下"可能有歧义
+
+当 Kim 说"把XX信息确认一下"时，这个词有**两种情况**，必须先问清楚再行动：
+
+- **情况 A（需你主动）**：信息是 Kim 自己写的/猜测的 → 你需要去联系对方（工厂/客户）验证
+- **情况 B（只需整理）**：信息是对方刚告诉 Kim 的 → 已经确认过了，你只需要整理/转述
+
+❌ 错误的做法（被本 session 纠正）：
+- Kim 说"先把学之友给我的信息总结一下，再发给学之友确认一下" → 我直接去起草给学之友的确认消息
+- Kim 纠正："不是，这些信息是我刚刚跟学之友确认过的。我要整理发给 James"
+
+✅ 正确的做法：
+- 先问一句："这些信息是已经确认过的还是要我去跟对方再核实？"
+- 如果 Kim 说"已经确认了" → 直接整理，不再重复问第三方
+- 如果 Kim 说"你去帮我核实" → 再去联系对方
+
+> **核心判断标准：** 谁说的？信息从对方来 = 已确认。信息从 Kim 的猜测来 = 需核实。
 
 #### ⚠️ 陷阱：用户说"肯定在"的东西，先自己查，不要问"在哪"
 
@@ -87,15 +123,18 @@ tags: [workflow, standard-operating-procedure]
 - 若找不到适配 skill → 说明"无现有 skill 可用"，然后规划常规执行步骤
 
 ② 适用 profile：
-- 用 `hermes profile list` 查看**所有**可用 profile，逐个判断是否能派上用场：
+- 用 `hermes profile list` 查看**所有**可用 profile，逐个判断是否适合当前任务：
   - `coder` — 写代码（Qwen 3.7 Max）
   - `researcher` — 调研分析（MiMo 2.5）
   - `reviewer` — 审查代码质量（Qwen 3.7 Max）
-  - `johnny` (杠精) — 专门找茬、反驳决策、发现漏洞（MiMo 2.5）
+  - `johnny` / 杠精 — 找茬、反驳、发现漏洞（MiMo 2.5）
+  - `fengge` / 峰哥 — 家教、小孩辅导（Qwen 3.7 Max，融合孔子/苏格拉底/费曼教学法）
+  - `billgates` / 比尔盖茨 — 商业参谋、理财、生意分析（DeepSeek V4 Flash，融合巴菲特/芒格/张一鸣/Naval 思维）
   - 可能还有其他 profile 有专长
-- 判断每个 profile 在当前任务中是否能派上用场
-- 若找到 → 在执行计划中写明哪个步骤交给哪个 profile，用 `kanban_create(assignee="profile名")` 创建任务卡片，由 Kanban Dispatcher 自动唤醒对应 profile 执行
-- ⚠️ **铁律：多 specialist 任务必须走 kanban，不能用 delegate_task 替代。** delegate_task 只用于单次快速推理（查个资料、回答个问题、让 johnny 杠一下）。写代码、审查、多 profile 协作的任务，必须用 kanban_create。每次想用 delegate_task 时，先问自己「这活该走 kanban 吗？」
+- 涉及商业决策、风险评估 → 优先考虑 billgates 或 johnny
+- 涉及家教、教育小孩 → 优先考虑 fengge
+- 若找到适用 profile → 用 `kanban_create(assignee="profile名")` 创建任务卡片
+- ⚠️ **铁律：多 specialist 任务必须走 kanban，不能用 delegate_task 替代。** delegate_task 只用于单次快速推理。写代码、审查、多 profile 协作的任务必须用 kanban_create。
 - ⚠️ **陷阱：delegate_task 的子 agent 会污染共享工作目录。** 并行派多个子 agent 改同一个仓库时，它们共享同一个 clone，一个的改动会混入另一个的提交里。要么给每个子 agent 单独 clone，要么确保它们都从 main 建分支。
 
 > ⚠️ **Hermes Studio WebUI 群聊功能（GroupChat）不可用。** 数据库表和 WebSocket 连接存在，但消息分发引擎未实现，agent 不会响应群聊消息。详见 `references/hermes-webui-groupchat.md`。如需多 profile 实时对话，用 Telegram 群 + 各 profile 独立 gateway。
@@ -252,18 +291,27 @@ tags: [workflow, standard-operating-procedure]
 ### 第 4 步：执行
 逐步骤执行。
 
-#### ⚠️ 执行前检查：macOS 代理端口可能已切换
-Kim 的 macOS 系统代理端口在 7892 和 7897 之间不固定切换。每次执行需要联网的命令前，务必用以下方式确认当前代理端口：
+#### ⚠️ 执行注意事项
+
+**1. macOS 代理端口可能已切换**
+Kim 的 macOS 系统代理端口在 7892 和 7897 之间不固定切换。执行联网命令前先确认：
 ```bash
-networksetup -getsecurewebproxy Wi-Fi
-# 输出中的 Port: 就是当前端口
-```
-或者直接测试连通性：
-```bash
+networksetup -getsecurewebproxy Wi-Fi  # 查看当前代理端口
 nc -z -G 3 127.0.0.1 7892 && echo "7892 可用" || echo "7892 不可用"
 nc -z -G 3 127.0.0.1 7897 && echo "7897 可用" || echo "7897 不可用"
 ```
-原因：ClashX/Clash Meta 等代理工具会在网络变化、重启后变更端口，不要假设上一次的端口仍然有效。
+
+**2. 配置变更后必须重启 Hermes Worker**
+改了 config.yaml 或 .env 后，正在运行的 Hermes Worker 不会自动重新加载配置。需要：
+```bash
+# 1. 查看当前 worker PID
+curl http://127.0.0.1:8748/worker-status
+# 2. kill 旧 worker，Hermes Web UI 会自动重建一个
+kill <PID>
+# 3. 验证新 worker 已启动
+curl http://127.0.0.1:8748/worker-status
+```
+
 - 标记给自己的任务 → 自己完成，每步用 `todo_write` 记录进度和证据
 - 标记给其他 profile 的任务 → 用 `kanban_create` 创建任务卡片（指定 assignee），由 Kanban Dispatcher 自动调度对应 profile 执行，通过 `kanban_show` 追踪完成状态，拿到产出后验收
 
@@ -271,13 +319,15 @@ nc -z -G 3 127.0.0.1 7897 && echo "7897 可用" || echo "7897 不可用"
 - 产出是否符合第 1 步确认的需求？
 - 所有步骤是否都有完成证据？（自己做的 + 委派给其他 profile 的）
 - 委派给 other profile 的产出是否经过验收？（不能盲信，必须核实）
-- **🧠 记忆同步到 `同步空间/ai memory/`** — 执行以下检查：
+- **🧠 记忆同步到 `同步空间/ai memory/`** — 每次任务完成后**强制执行**，不能跳过：
   1. 读 `同步空间/ai memory/profile.md` — 用户画像有没有新信息要加？
   2. 读 `同步空间/ai memory/memories/projects.md` — 项目进展有没有更新？
   3. 读 `同步空间/ai memory/memories/tech.md` — 工具/配置有没有变化？
   4. 有变化 → 写入对应文件，格式：`- **YYYY-MM-DD** 事实描述`
   5. 更新 `同步空间/ai memory/CHANGELOG.md` 记录变更
   6. **必须有实际的文件写入操作**（write_file），不能只在脑子里过一遍
+  7. ⚠️ **铁律：记忆同步不是可选项。哪怕任务很小（回答一个问题、改一个配置），只要学到了新信息就要写进去。**
+  8. **可选：写完记忆后告诉 Kim「可以在 Obsidian 里查看更新」** — Kim 已安装 Obsidian 并打开了 `ai memory/` 文件夹
 - **技术术语是否解释清楚了？** 如果产出包含专业术语，必须逐个用大白话+比喻解释。
 - **调研类任务的额外检查（若涉及物价/生活成本/旅行费用）：** Kim 明确要求用 **YouTube + Reddit** 获取一手数据，不能只靠 Numbeo 等统计数据。如果调研报告缺少这两个来源的数据，必须在报告中标注并说明原因（如「YouTube 描述的确实不含价格数字」「Reddit API 被封」）。
 
@@ -289,6 +339,18 @@ nc -z -G 3 127.0.0.1 7897 && echo "7897 可用" || echo "7897 不可用"
 2. **简短直接，不铺垫** — 用户不要"首先让我们了解一下..."这类过渡。直接给答案。如"这东西跟SQL有什么区别" → 直接说"SQL查完全匹配，RAG查意思相近的"。
 3. **用户问什么答什么** — 不要扩展解释用户没问的内容，除非用户追问。
 4. **承认错误** — 解释错了直接说"前面我说错了"，不要找补。
+5. **给 Kim 起草第三方消息时，先给短版，让他加自己的话** — Kim 经常需要你帮忙起草给客户（James）或工厂的消息。正确流程：
+
+   ❌ 错误做法（被本 session 纠正）：
+   - 写一封完整的、结构化的消息 → Kim 删掉大部分内容，改成自己的口吻 → 你白干
+
+   ✅ 正确做法：
+   - 先给一个**极简版**（3-5句话），只说事实不修饰
+   - 说"这是基本信息，你看加点什么"
+   - Kim 会自己加上他的口吻和指向性内容
+   - 如果 Kim 要求"帮我直接写" → 再写完整版
+
+   **判断标准：** 当你觉得"要不要写得详细点"的时候 → 选短的。Kim 宁可变短也不要变长。**被 Kim 多次纠正过：他要在消息里体现他自己的商业判断和口吻，不是你替他写的。**
 
 **触发：** 每当你需要向用户解释一个技术概念时，先想比喻，3句话内说完，然后问"够清楚了吗？"
 
@@ -315,3 +377,29 @@ nc -z -G 3 127.0.0.1 7897 && echo "7897 可用" || echo "7897 不可用"
 | [references/oss-contribution-workflow.md](references/oss-contribution-workflow.md) | 开源项目 PR 贡献全流程：fork→clone→修改→测试→PR，含代理配置 |
 | [references/hermes-mcp-setup.md](references/hermes-mcp-setup.md) | Hermes MCP 服务器接入：HTTP/Stdio 两种模式，常见坑 |
 | [references/hermes-provider-config-quirks.md](references/hermes-provider-config-quirks.md) | Hermes Provider 配置坑点：DeepSeek 走 OpenRouter 的修复 |
+
+### 外部参考 — AI 人格 / 思维方式 Skill 社区合集
+
+| 项目 | ⭐ | 链接 | 说明 |
+|------|----|------|------|
+| **awesome-nuwa** | 166 | https://github.com/Panmax/awesome-nuwa | 165个社区整理的 AI 人格 Skill（商业领袖、企业家、投资大师、科学家、哲学家等共55+个商业相关）。在执行 `reasonix-huashu-nuwa`（女娲蒸馏）前，**必须优先查此合集**，有现成的不需要重复蒸馏 |
+
+### 外部参考 — 记忆层方案
+
+| 项目 | ⭐ | 链接 | 说明 |
+|------|----|------|------|
+| **Obsidian** | — | https://obsidian.md | **本地笔记软件，Markdown 可视化编辑器**。已集成到 Kim 的工作流，`ai memory/` 文件夹可通过 Obsidian 打开浏览和编辑 |
+| **obsidian-skills** | 38,399 | https://github.com/kepano/obsidian-skills | Obsidian 创始人写的 Agent Skills，教 AI 读写 Obsidian 格式的 Markdown |
+| **EverOS** | 9,224 | https://github.com/EverMind-AI/EverOS | 本地优先的跨 agent 记忆层，Markdown + SQLite + LanceDB（备选方案，暂未使用） |
+| **reasonix-memory-box** | — | 本地 skill | 当前的记忆管理方式，纯 Markdown 文件 |
+
+### Obsidian 使用说明
+
+Kim 已安装 Obsidian 并打开了 `同步空间/ai memory/` 文件夹作为仓库。使用方式：
+
+1. **可视化浏览** — 打开 Obsidian，左侧能看到所有记忆文件，点击即可查看和编辑
+2. **双链** — 可在记忆文件之间用 `[[文件名]]` 创建链接
+3. **搜索** — Obsidian 自带全文搜索（Ctrl+Shift+F）
+4. **AI 读写** — 通过 kepano/obsidian-skills，AI 可以直接创建和编辑 Obsidian 格式的 Markdown
+
+**SOP 第5步完成检查后**，也可以建议 Kim 「在 Obsidian 里打开看看新的记忆」。
